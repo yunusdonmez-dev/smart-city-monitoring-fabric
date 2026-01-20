@@ -1,6 +1,7 @@
 
 # Smart City / Open-Meteo Data Pipeline on Microsoft Fabric
 
+Electricity prices vary throughout the day. Our (imaginary) customer wants to shift consumption to the cheapest time windows to reduce cost. This solution ingests time-series price data, processes it through Bronze/Silver/Gold layers in Microsoft Fabric, and produces a flagged output indicating when electricity is “cheap” . The curated results are then exposed to Power BI for monitoring and decision support.
 This project implements a Microsoft Fabric Lakehouse solution using a medallion (Bronze/Silver/Gold) architecture. Data is ingested via a Fabric Pipeline from REST APIs (Energy / Open-Meteo-style sources), processed with Fabric notebooks, and served to Power BI for reporting.
 
 ## Architecture Diagram
@@ -51,6 +52,13 @@ This project implements a Microsoft Fabric Lakehouse solution using a medallion 
 
 6. **Consumption (Power BI)**
    - Power BI dashboard reads from the **Gold** layer  via a semantic model.
+
+## Source Control / CI/CD Notes
+
+This workspace is connected to a Git repository and uses Fabric **Sync** to publish changes from source control into the workspace.  
+Git + Sync provides **version control and a deployment mechanism**, but it is **not full CI/CD by itself** because it does not automatically run tests, quality gates, or multi-environment promotions.  
+For full CI/CD, add **GitHub Actions/Azure DevOps** to validate changes (CI) and automate deployments across **Dev → Test → Prod** (CD).
+
 
 ## Components
 
