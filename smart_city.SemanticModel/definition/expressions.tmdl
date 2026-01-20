@@ -1,0 +1,11 @@
+expression 'DirectLake - smart_city_lh' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/903e14be-9926-484e-95f4-7e939a0851d1/0d812765-703c-45fa-a54d-f31919cc9bfe", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: cec9e15a-1666-4c04-a68b-c6775dca1913
+
+	annotation PBI_IncludeFutureArtifacts = False
+
+	annotation PBI_RemovedChildren = [{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[ops_log_events]"}},"objectType":"Table"},{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[silver_energy]"}},"objectType":"Table"},{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[silver_weather]"}},"objectType":"Table"}]
+

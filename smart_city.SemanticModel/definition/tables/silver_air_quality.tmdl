@@ -1,0 +1,54 @@
+table silver_air_quality
+	lineageTag: 0ca7ce3c-0487-4f88-bf7a-bd5741d7dd1f
+	sourceLineageTag: [dbo].[silver_air_quality]
+
+	column timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 6b366fe6-4afd-40cc-bf55-253f642e6abf
+		sourceLineageTag: timestamp
+		summarizeBy: none
+		sourceColumn: timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column carbon_monoxide
+		dataType: double
+		lineageTag: 0571c0ad-bdde-4055-976c-4dde50180d4b
+		sourceLineageTag: carbon_monoxide
+		summarizeBy: sum
+		sourceColumn: carbon_monoxide
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column nitrogen_dioxide
+		dataType: double
+		lineageTag: 04b125a1-dd5c-40f1-aefc-cca8513042c4
+		sourceLineageTag: nitrogen_dioxide
+		summarizeBy: sum
+		sourceColumn: nitrogen_dioxide
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pm10
+		dataType: double
+		lineageTag: d4612adb-8379-467a-aa11-c28d63f1e6d7
+		sourceLineageTag: pm10
+		summarizeBy: sum
+		sourceColumn: pm10
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition silver_air_quality = entity
+		mode: directLake
+		source
+			entityName: silver_air_quality
+			schemaName: dbo
+			expressionSource: 'DirectLake - smart_city_lh'
+

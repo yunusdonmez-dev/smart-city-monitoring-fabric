@@ -1,0 +1,379 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "RestSource",
+            "requestMethod": "GET",
+            "httpRequestTimeout": "00:01:40",
+            "requestInterval": "00.00:00:00.010",
+            "datasetSettings": {
+              "type": "RestResource",
+              "typeProperties": {
+                "relativeUrl": {
+                  "value": "@concat('/v1/energyprices?fromDate=', formatDateTime(addDays(utcnow(), -7), 'yyyy-MM-ddT00:00:00.000Z'), '&tillDate=', formatDateTime(utcnow(), 'yyyy-MM-ddT23:59:59.000Z'), '&usageType=1&interval=4')\n",
+                  "type": "Expression"
+                }
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "3256db8d-cb17-4d35-adeb-d55731d54ed0"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "JsonSink",
+            "formatSettings": {
+              "type": "JsonWriteSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": {
+                    "value": "bronze/energy",
+                    "type": "Expression"
+                  },
+                  "fileName": {
+                    "value": "@concat(formatDateTime(addDays(utcnow(), -7), 'yyyy-MM-dd'), '_', formatDateTime(utcnow(), 'yyyy-MM-dd'), '.json')",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "schema": {},
+              "connectionSettings": {
+                "name": "smart_city_lh",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "19cc9bfe-f319-a54d-45fa-703c0d812765",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "externalReferences": {
+                    "connection": "99e3bc56-b4f7-48b0-b9de-30828057a4e2"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy_energyprices_to_bronze",
+        "dependsOn": [
+          {
+            "activity": "Delete bronz",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "HttpReadSettings",
+              "requestMethod": "GET"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "HttpServerLocation",
+                  "relativeUrl": {
+                    "value": "@concat('/v1/forecast?latitude=', pipeline().parameters.lat, '&longitude=', pipeline().parameters.long, '&hourly=temperature_2m,wind_speed_10m,direct_radiation&past_days=7')",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "schema": {},
+              "externalReferences": {
+                "connection": "ee37dc0a-ccd2-42f0-b330-fac286bd19fc"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "JsonSink",
+            "formatSettings": {
+              "type": "JsonWriteSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": "bronze/weather",
+                  "fileName": {
+                    "value": "@concat(formatDateTime(addDays(utcnow(), -7), 'yyyy-MM-dd'), '_', formatDateTime(utcnow(), 'yyyy-MM-dd'), '.json')",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "schema": {},
+              "connectionSettings": {
+                "name": "smart_city_lh",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "19cc9bfe-f319-a54d-45fa-703c0d812765",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "externalReferences": {
+                    "connection": "99e3bc56-b4f7-48b0-b9de-30828057a4e2"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy_weather_to_bronze",
+        "dependsOn": [
+          {
+            "activity": "Delete bronz",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "JsonSource",
+            "formatSettings": {
+              "type": "JsonReadSettings"
+            },
+            "storeSettings": {
+              "type": "HttpReadSettings",
+              "requestMethod": "GET"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "HttpServerLocation",
+                  "relativeUrl": {
+                    "value": "@concat(\n  'v1/air-quality?latitude=',\n  pipeline().parameters.lat,\n  '&longitude=',\n  pipeline().parameters.long,\n  '&hourly=carbon_monoxide,nitrogen_dioxide,pm10',\n  '&past_days=7'\n)\n",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "schema": {},
+              "externalReferences": {
+                "connection": "cf825e7a-90b5-4b7a-a5c8-2348cd264413"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "JsonSink",
+            "formatSettings": {
+              "type": "JsonWriteSettings"
+            },
+            "storeSettings": {
+              "type": "LakehouseWriteSettings"
+            },
+            "datasetSettings": {
+              "type": "Json",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": "bronze/air_quality",
+                  "fileName": {
+                    "value": "@concat(formatDateTime(addDays(utcnow(), -7), 'yyyy-MM-dd'), '_', formatDateTime(utcnow(), 'yyyy-MM-dd'), '.json')",
+                    "type": "Expression"
+                  }
+                }
+              },
+              "schema": {},
+              "connectionSettings": {
+                "name": "smart_city_lh",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "19cc9bfe-f319-a54d-45fa-703c0d812765",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "externalReferences": {
+                    "connection": "99e3bc56-b4f7-48b0-b9de-30828057a4e2"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy_airquality_to_bronze",
+        "dependsOn": [
+          {
+            "activity": "Delete bronz",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "5e927db0-747a-9f45-4368-f2a6521a9360",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "bronze_to_silver",
+        "dependsOn": [
+          {
+            "activity": "Copy_weather_to_bronze",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "Copy_energyprices_to_bronze",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "Copy_airquality_to_bronze",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "8b868ec0-034a-af21-4fe3-35b3f94746d6",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "nb_silver_to_gold",
+        "dependsOn": [
+          {
+            "activity": "bronze_to_silver",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Delete",
+        "typeProperties": {
+          "enableLogging": false,
+          "datasetSettings": {
+            "type": "Binary",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "bronze"
+              }
+            },
+            "connectionSettings": {
+              "name": "smart_city_lh",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "19cc9bfe-f319-a54d-45fa-703c0d812765",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "externalReferences": {
+                  "connection": "99e3bc56-b4f7-48b0-b9de-30828057a4e2"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "storeSettings": {
+            "type": "LakehouseReadSettings",
+            "recursive": true,
+            "enablePartitionDiscovery": false
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Delete bronz",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "lat": {
+        "type": "string",
+        "defaultValue": "52.3676"
+      },
+      "long": {
+        "type": "string",
+        "defaultValue": "4.9041"
+      }
+    }
+  }
+}

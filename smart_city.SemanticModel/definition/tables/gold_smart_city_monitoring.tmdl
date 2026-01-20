@@ -1,0 +1,96 @@
+table gold_smart_city_monitoring
+	lineageTag: b9b72f3c-825a-46ef-9769-42a530325407
+	sourceLineageTag: [dbo].[gold_smart_city_monitoring]
+
+	column timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 22e1b2ff-b33e-40a7-8993-1038ee7d74d4
+		sourceLineageTag: timestamp
+		summarizeBy: none
+		sourceColumn: timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column price
+		dataType: double
+		lineageTag: b29e2b87-3781-4dc4-a000-a172ec39277c
+		sourceLineageTag: price
+		summarizeBy: sum
+		sourceColumn: price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avg_price_last_3h
+		dataType: double
+		lineageTag: 6ba05e71-3f33-471d-965d-795535d60d3e
+		sourceLineageTag: avg_price_last_3h
+		summarizeBy: sum
+		sourceColumn: avg_price_last_3h
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pct_vs_3h_avg
+		dataType: double
+		lineageTag: cc168ad1-52cc-4ec9-bf2b-b7ec44dae968
+		sourceLineageTag: pct_vs_3h_avg
+		summarizeBy: sum
+		sourceColumn: pct_vs_3h_avg
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column wx_temperature_2m
+		dataType: double
+		lineageTag: 90c4ed27-bf66-420d-9e10-4c3c3611d223
+		sourceLineageTag: wx_temperature_2m
+		summarizeBy: sum
+		sourceColumn: wx_temperature_2m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column wx_wind_speed_10m
+		dataType: double
+		lineageTag: db73f077-f2aa-4f6e-9b0a-f6eb659f8cff
+		sourceLineageTag: wx_wind_speed_10m
+		summarizeBy: sum
+		sourceColumn: wx_wind_speed_10m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column wx_direct_radiation
+		dataType: double
+		lineageTag: 5b143b2b-a507-4df3-ad86-bb1849c94549
+		sourceLineageTag: wx_direct_radiation
+		summarizeBy: sum
+		sourceColumn: wx_direct_radiation
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column label
+		dataType: string
+		lineageTag: b03b6b72-0505-4eb9-8951-3b9625d265ba
+		sourceLineageTag: label
+		summarizeBy: none
+		sourceColumn: label
+
+		annotation SummarizationSetBy = Automatic
+
+	partition gold_smart_city_monitoring = entity
+		mode: directLake
+		source
+			entityName: gold_smart_city_monitoring
+			schemaName: dbo
+			expressionSource: 'DirectLake - smart_city_lh'
+

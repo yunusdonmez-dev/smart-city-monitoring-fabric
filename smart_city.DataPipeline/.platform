@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "smart_city"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e96928a1-116a-bfe0-40c7-aa7900b74ed1"
+  }
+}

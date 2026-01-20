@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "smartcity"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "6dfed018-c997-a582-4484-2d8cb493a0b7"
+  }
+}

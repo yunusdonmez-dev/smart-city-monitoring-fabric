@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "CopyJob",
+    "displayName": "copy_weather_to_bronze"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "54592526-fbfa-bd6a-42c9-d764ce4996b1"
+  }
+}

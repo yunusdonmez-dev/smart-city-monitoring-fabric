@@ -1,0 +1,6 @@
+relationship 2980b465-376c-eabd-210d-8d2e2fd5a8cd
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: gold_smart_city_monitoring.timestamp
+	toColumn: silver_air_quality.timestamp
+
